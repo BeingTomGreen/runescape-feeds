@@ -6,12 +6,34 @@ define('pathToPublic', pathToRoot .'public/');
 define('pathToSystem', pathToRoot .'system/');
 define('pathToLibraries', pathToSystem .'libraries/');
 
-// Include and initialize SimplePie
-require_once pathToLibraries. 'simple-pie-compiled.inc.php';
-$simplePie = new SimplePie();
+// Set defualt Timezone
+date_default_timezone_set('Europe/London');
 
-?>
-<!DOCTYPE html>
+// Include SimplePie
+require_once pathToLibraries. 'simple-pie-compiled.inc.php';
+
+// Initialize SimplePie
+$rsNews = new SimplePie();
+$rsSocial = new SimplePie();
+
+// Set the feed URLS
+$rsNews->set_feed_url('http://services.runescape.com/m=news/latest_news.rss');
+$rsSocial->set_feed_url('http://services.runescape.com/m=news/latest_news.rss');
+
+// Set caching
+$rsNews->enable_cache(false);
+$rsSocial->enable_cache(false);
+
+// Init
+$rsNews->init();
+$rsSocial->init();
+
+// Auto handle the content types
+$rsNews->handle_content_type();
+$rsSocial->handle_content_type();
+
+// When we end our PHP block, we want to make sure our DOCTYPE is on the top line to make sure that the browser snaps into Standards Mode.
+?><!DOCTYPE html>
 <html lang="en">
 	<head>
 		<!-- Meta -->
@@ -36,15 +58,25 @@ $simplePie = new SimplePie();
 		<div id='wrapper'>
 			<ul class='nav nav-tabs'  id='tabs'>
 				<li><a href='#rsnews' data-toggle='tab'>Runescape News</a></li>
-				<li><a href='#rsblogs' data-toggle='tab'>Runescape Blogs</a></li>
 				<li><a href='#rssocial' data-toggle='tab'>Runescape Social</a></li>
 			 	<li><a href='#about' data-toggle='tab'>About</a></li>
 			</ul>
 
 			<div class='tab-content'>
-			  <div class='tab-pane active' id='rsnews'>xxx</div>
-			  <div class='tab-pane' id='rsblogs'>yyy</div>
-			  <div class='tab-pane' id='rssocial'>uuu</div>
+			  <div class='tab-pane active' id='rsnews'>
+				<?php //Runescape News
+					foreach($rsNews->get_items() as $item) {
+						echo $item->get_title();
+					}
+				?>
+				</div>
+			  <div class='tab-pane' id='rssocial'>
+				<?php //Runescape Social
+					foreach($rsSocial->get_items() as $item) {
+						echo $item->get_title();
+					}
+				?>
+			  </div>
 			  <div class='tab-pane' id='about'>
 					<p>This page is designed to provided people with the latest goings on in <a href='http://www.runescape.com' title='Runescape homepage'>Runescape</a><p>
 					<p>This page was built using <a href='http://simplepie.org/' title='The SimplePie website'>SimplePie</a> and the <a href='http://twitter.github.io/bootstrap/' title='Bootstrap!'>Twitter Bootstrap</a>.</p>
@@ -66,3 +98,8 @@ $simplePie = new SimplePie();
 		</script>
 	</body>
 </html>
+<?php
+// Clean up!
+unset($rsNews);
+unset($rsSocial);
+?>
