@@ -32,9 +32,8 @@ $rsSocial->handle_content_type();
 	<head>
 		<!-- Meta -->
 		<meta charset="utf-8">
-		<title>Bootstrap</title>
+		<title>Runescape News!</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
 
 		<!-- Styles -->
 		<link href="assets/css/styles.css" rel="stylesheet">
