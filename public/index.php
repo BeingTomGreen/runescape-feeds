@@ -1,16 +1,11 @@
 <?php
 
-// Define various paths
-define('pathToRoot', 'D:/Dropbox/Work/Repos/runescape-feeds/');
-define('pathToPublic', pathToRoot .'public/');
-define('pathToSystem', pathToRoot .'system/');
-define('pathToLibraries', pathToSystem .'libraries/');
-
 // Set defualt Timezone
 date_default_timezone_set('Europe/London');
 
 // Include SimplePie
-require_once pathToLibraries. 'simple-pie-compiled.inc.php';
+require_once '../system/libraries/simple-pie-compiled.inc.php';
+require_once '../system/libraries/functions.inc.php';
 
 // Initialize SimplePie
 $rsNews = new SimplePie();
@@ -18,7 +13,7 @@ $rsSocial = new SimplePie();
 
 // Set the feed URLS
 $rsNews->set_feed_url('http://services.runescape.com/m=news/latest_news.rss');
-$rsSocial->set_feed_url('http://services.runescape.com/m=news/latest_news.rss');
+$rsSocial->set_feed_url('http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=runescape');
 
 // Set caching
 $rsNews->enable_cache(false);
@@ -65,21 +60,56 @@ $rsSocial->handle_content_type();
 			<div class='tab-content'>
 			  <div class='tab-pane active' id='rsnews'>
 				<?php //Runescape News
-					foreach($rsNews->get_items() as $item) {
-						echo $item->get_title();
+					// Check to see if we have error(s)
+					if ($rsNews->error())
+					{
+						// Display the error(s)
+						echo '<p>'. $rsNews->error() .'</p>';
+					}
+					// No error(s)
+					else
+					{
+						// Loop through each item
+						foreach($rsNews->get_items() as $item) {
+							// Print the item out
+							echo '<div class="chunk">';
+							echo '<a href=\''. $item->get_link() .'\'>'. $item->get_title() .'</a><br />';
+							echo '<p>'. $item->get_description() .'</p>';
+							echo '<div class=\'footer\'>Source: <a href=\'http://services.runescape.com/m=news/list.ws\'>Runescape News Archive</a> | '. makeRelativeDate($item->get_date()) .'</div>';
+							echo '</div>';
+							echo '<hr />';
+						}
 					}
 				?>
 				</div>
 			  <div class='tab-pane' id='rssocial'>
 				<?php //Runescape Social
-					foreach($rsSocial->get_items() as $item) {
-						echo $item->get_title();
+					// Check to see if we have error(s)
+					if ($rsSocial->error())
+					{
+						// Give a friendly error message..
+						echo '<p>Unfortunately this feed is currently unavailable, this could be due to maintainance or an error with the feed. Please try again later.</p>';
+						// Log the error(s)
+						error_log($rsSocial->error());
+					}
+					// No error(s)
+					else
+					{
+						// Loop through each item
+						foreach($rsSocial->get_items() as $item) {
+							// Print the item out
+							echo '<div class="chunk">';
+							echo '<p>'. tweetify($item->get_description()) .'</p>';
+							echo '<div class=\'footer\'>Source: <a href=\''. $item->get_link() .'\'>Official Runescape Twitter</a> | '. makeRelativeDate($item->get_date()) .'</div>';
+							echo '</div>';
+							echo '<hr />';
+						}
 					}
 				?>
 			  </div>
 			  <div class='tab-pane' id='about'>
 					<p>This page is designed to provided people with the latest goings on in <a href='http://www.runescape.com' title='Runescape homepage'>Runescape</a><p>
-					<p>This page was built using <a href='http://simplepie.org/' title='The SimplePie website'>SimplePie</a> and the <a href='http://twitter.github.io/bootstrap/' title='Bootstrap!'>Twitter Bootstrap</a>.</p>
+					<p>This page was built using <a href='http://simplepie.org/' title='The SimplePie website'>SimplePie</a> and <a href='http://twitter.github.io/bootstrap/' title='Bootstrap!'>Twitter Bootstrap</a>.</p>
 					<p>You can find the source code for this on <a href='https://bitbucket.org/BeingTomGreen/runescape_feeds'>Bitbucket</a>.</p>
 					<p><a href='https://bitbucket.org/BeingTomGreen/runescape_feeds/issues'>Found a bug?</a></p>
 					<p>Built by <a href='https://twitter.com/beingtomgreen'>@beingtomgreen</a></p>
