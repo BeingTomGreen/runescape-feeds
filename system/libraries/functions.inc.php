@@ -1,29 +1,26 @@
 <?php
 
-class Feeds {
 	/*
 	* -------------------------------------------------------------
 	* Name:		 tweetify
 	* Version:	1.1
 	* Date:		 17/07/2010
 	* Author:	 Tom Green <KingOfCuddles@gmail.com>
-	* Purpose:	Takes a Twitter status and converts Links, @Names and #Searchs into proper links, and replaces RT with the retweet Icon
+	* Purpose:	Takes a Twitter status and converts Links, @Names and #Searchs into proper links
 	* Input:		$tweet = The twitter status
 	* 			$class = The CSS class to be applied to the Link
 	*				$rel = Allows you to specify the REL attribute of the URL - Defaults to "nofollow"
 	*				find more here: http://www.google.com/support/webmasters/bin/answer.py?hl=en&answer=96569
 	* -------------------------------------------------------------
-	$RT_url = "http://hughbriss.com/wp-content/uploads/2009/11/retweet-icon.png"
 	*/
 
-	function tweetify ($tweet, $class = "", $rel = "nofollow", $RT_url = "http://www.zomfshark.co.uk/webmedia/images/retweet_smaller.ico") {
+	function tweetify ($tweet, $class = "", $rel = "nofollow") {
 		//Replace links
 		$tweet = preg_replace("/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/", "<a href=\"\\0\" rel=\"$rel\" class=\"$class\">\\0</a>", $tweet);
 		//Replace @names
 		$tweet = preg_replace("#(^|[\n ])@([^ \"\t\n\r<]*)#ise", "'\\1<a href=\"http://www.twitter.com/\\2\" rel=\"$rel\" class=\"$class\">@\\2</a>'", $tweet);
 		//Replace #Searchs
 		$tweet = preg_replace("!(^|[\n ])#([^ \"\t\n\r<]*)!ise", "'\\1<a href=\"http://twitter.com/search?q=\\2\" rel=\"$rel\" class=\"$class\">#\\2</a>'", $tweet);
-		$tweet = str_replace("RT", "<img src='$RT_url' alt='ReTweet' class='show'/>", "$tweet");
 		return $tweet;
 	}
 
@@ -40,7 +37,7 @@ class Feeds {
 	* 				it will print Eariler today instead of 6 hours ago
 	* -------------------------------------------------------------
 	*/
-	function MakeRelativeDate($timestamp, $days = false, $format = "l \\t\h\e jS \of F Y")
+	function makeRelativeDate($timestamp, $days = false, $format = "l \\t\h\e jS \of F Y")
 	{
 		//First check if $timestamp is a timestamp...
 		//If not, lets try and convert it...
@@ -112,8 +109,5 @@ class Feeds {
 			}
 		}
 	}
-}
 
-
-
-?>
+	?>
