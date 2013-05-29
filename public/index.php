@@ -12,12 +12,17 @@ $rsNews = new SimplePie();
 $rsSocial = new SimplePie();
 
 // Set the feed URLS
-$rsNews->set_feed_url('http://services.runescape.com/m=news/latest_news.rss');
-$rsSocial->set_feed_url('http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=runescape');
+// Trick SimplePie into thinking its an array - this allows set_item_limit() to work, which I prefer to get_items(0,5)
+$rsNews->set_feed_url(['http://services.runescape.com/m=news/latest_news.rss']);
+$rsSocial->set_feed_url(['http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=runescape']);
 
 // Set caching
 $rsNews->enable_cache(false);
 $rsSocial->enable_cache(false);
+
+// Set number of items to get
+$rsNews->set_item_limit(5);
+$rsSocial->set_item_limit(5);
 
 // Init
 $rsNews->init();
