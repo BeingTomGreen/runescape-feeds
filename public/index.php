@@ -1,5 +1,8 @@
 <?php
 
+// Set Cahce to true/false
+$enableCache = false;
+
 // Set defualt Timezone
 date_default_timezone_set('Europe/London');
 
@@ -7,29 +10,20 @@ date_default_timezone_set('Europe/London');
 require_once '../system/libraries/simple-pie-compiled.inc.php';
 require_once '../system/libraries/functions.inc.php';
 
-// Initialize SimplePie
+// Runescape News
 $rsNews = new SimplePie();
-$rsSocial = new SimplePie();
-
-// Set the feed URLS
-// Trick SimplePie into thinking its an array - this allows set_item_limit() to work, which I prefer to get_items(0,5)
 $rsNews->set_feed_url(['http://services.runescape.com/m=news/latest_news.rss']);
-$rsSocial->set_feed_url(['http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=runescape']);
-
-// Set caching
-$rsNews->enable_cache(false);
-$rsSocial->enable_cache(false);
-
-// Set number of items to get
+$rsNews->enable_cache($enableCache);
 $rsNews->set_item_limit(5);
-$rsSocial->set_item_limit(5);
-
-// Init
 $rsNews->init();
-$rsSocial->init();
-
-// Auto handle the content types
 $rsNews->handle_content_type();
+
+// Runescape Social
+$rsSocial = new SimplePie();
+$rsSocial->set_feed_url(['http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=runescape']);
+$rsSocial->enable_cache($enableCache);
+$rsSocial->set_item_limit(5);
+$rsSocial->init();
 $rsSocial->handle_content_type();
 
 // When we end our PHP block, we want to make sure our DOCTYPE is on the top line to make sure that the browser snaps into Standards Mode.
@@ -56,14 +50,14 @@ $rsSocial->handle_content_type();
 
 	<body>
 		<div id='wrapper'>
-			<ul class='nav nav-tabs'  id='tabs'>
+			<ul class='nav nav-tabs' id='tabs'>
 				<li><a href='#rsnews' data-toggle='tab'>Runescape News</a></li>
 				<li><a href='#rssocial' data-toggle='tab'>Runescape Social</a></li>
-			 	<li><a href='#about' data-toggle='tab'>About</a></li>
+				<li><a href='#about' data-toggle='tab'>About</a></li>
 			</ul>
 
 			<div class='tab-content'>
-			  <div class='tab-pane active' id='rsnews'>
+				<div class='tab-pane active' id='rsnews'>
 				<?php //Runescape News
 					// Check to see if we have error(s)
 					if ($rsNews->error())
@@ -78,16 +72,16 @@ $rsSocial->handle_content_type();
 						foreach($rsNews->get_items() as $item) {
 							// Print the item out
 							echo '<div class="chunk">';
-							echo '<a href=\''. $item->get_link() .'\'>'. $item->get_title() .'</a><br />';
+							echo '<a href="'. $item->get_link() .'">'. $item->get_title() .'</a><br />';
 							echo '<p>'. $item->get_description() .'</p>';
-							echo '<div class=\'footer\'>Source: <a href=\'http://services.runescape.com/m=news/list.ws\'>Runescape News Archive</a> | '. makeRelativeDate($item->get_date()) .'</div>';
+							echo '<div class="footer">Source: <a href="http://services.runescape.com/m=news/list.ws">Runescape News Archive</a> | '. makeRelativeDate($item->get_date()) .'</div>';
 							echo '</div>';
 							echo '<hr />';
 						}
 					}
 				?>
 				</div>
-			  <div class='tab-pane' id='rssocial'>
+				<div class='tab-pane' id='rssocial'>
 				<?php //Runescape Social
 					// Check to see if we have error(s)
 					if ($rsSocial->error())
@@ -105,14 +99,14 @@ $rsSocial->handle_content_type();
 							// Print the item out
 							echo '<div class="chunk">';
 							echo '<p>'. tweetify($item->get_description()) .'</p>';
-							echo '<div class=\'footer\'>Source: <a href=\''. $item->get_link() .'\'>Official Runescape Twitter</a> | '. makeRelativeDate($item->get_date()) .'</div>';
+							echo '<div class="footer">Source: <a href="'. $item->get_link() .'">Official Runescape Twitter</a> | '. makeRelativeDate($item->get_date()) .'</div>';
 							echo '</div>';
 							echo '<hr />';
 						}
 					}
 				?>
-			  </div>
-			  <div class='tab-pane' id='about'>
+				</div>
+				<div class='tab-pane' id='about'>
 					<p>This page is designed to provided people with the latest goings on in <a href='http://www.runescape.com' title='Runescape homepage'>Runescape</a><p>
 					<p>This page was built using <a href='http://simplepie.org/' title='The SimplePie website'>SimplePie</a> and <a href='http://twitter.github.io/bootstrap/' title='Bootstrap!'>Twitter Bootstrap</a>.</p>
 					<p>You can find the source code for this on <a href='https://bitbucket.org/BeingTomGreen/runescape_feeds'>Bitbucket</a>.</p>
@@ -127,14 +121,13 @@ $rsSocial->handle_content_type();
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
 		<script src="assets/js/bootstrap.min.js"></script>
 		<script>
-  		$(function () {
-    		$('#tabs a:first').tab('show');
-  		})
+			$(function () {
+				$('#tabs a:first').tab('show');
+			})
 		</script>
 	</body>
 </html>
 <?php
 // Clean up!
-unset($rsNews);
-unset($rsSocial);
+unset($rsNews, $rsSocial);
 ?>
