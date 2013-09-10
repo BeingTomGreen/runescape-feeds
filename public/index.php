@@ -108,8 +108,8 @@ $rsSocial->handle_content_type();
 				<div class='tab-pane' id='about'>
 					<p>This page is designed to provided people with the latest goings on in <a href='http://www.runescape.com' title='Runescape homepage'>Runescape</a><p>
 					<p>This page was built using <a href='http://simplepie.org/' title='The SimplePie website'>SimplePie</a> and <a href='http://twitter.github.io/bootstrap/' title='Bootstrap!'>Twitter Bootstrap</a>.</p>
-					<p>You can find the source code for this on <a href='https://bitbucket.org/BeingTomGreen/runescape_feeds'>Bitbucket</a>.</p>
-					<p><a href='https://bitbucket.org/BeingTomGreen/runescape_feeds/issues'>Found a bug?</a></p>
+					<p>You can find the source code for this on <a href='https://github.com/BeingTomGreen/runescape-feeds'>Github</a>.</p>
+					<p><a href='https://github.com/BeingTomGreen/runescape-feeds/issues'>Found a bug?</a></p>
 					<p>Built by <a href='https://twitter.com/beingtomgreen'>@beingtomgreen</a></p>
 				</div>
 			</div>
